@@ -13,10 +13,21 @@
     <style>
       .timer {
         display: flex;
+        justify-content: center;
         flex-wrap: nowrap;
+
+        margin-top: 45vh;
       }
       .field {
-        margin-left: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .field:not(:last-child) {
+        margin-right: 30px;
+      }
+      .value {
+        font-size: 40px;
       }
       /* .label {
         display: block;

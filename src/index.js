@@ -1,5 +1,3 @@
-import './sass/main.scss';
-
 const refs = {
     daySpan: document.querySelector('[data-value="days"]'),
     hoursSpan: document.querySelector('[data-value="hours"]'),
@@ -7,40 +5,59 @@ const refs = {
     secsSpan: document.querySelector('[data-value="secs"]'),
 }
 
-const targetDate = new Date('Sep 03, 2021').getTime();
-// const getTime = () => {
-//     const now = Date.now();
+class CountdownTimer {
+    constructor({ selector, targetDate } ) {
+        this.selector = selector;
+        this.targetDate = targetDate;
 
-//     const time = targetDate - now;
+        this.refs = this.getRefs(selector);
+    }
+    start() {
+        this.getTime();
+        setInterval(this.getTime.bind(this), 1000);
+    }
+    getRefs(selector) {
+        const daysSpan = document.querySelector(`${selector} [data-value="days"]`);
+        const hoursSpan = document.querySelector(`${selector} [data-value="hours"]`);
+        const minsSpan = document.querySelector(`${selector} [data-value="mins"]`);
+        const secsSpan = document.querySelector(`${selector} [data-value="secs"]`);
+        
+        return { daysSpan, hoursSpan, minsSpan, secsSpan };
+    };
+    padStrStart(num) {
+        return String(num).padStart(2, 0);
+    };
+    renderTimer(obj) {
+        const { daysSpan, hoursSpan, minsSpan, secsSpan } = this.refs;
+        const { days, hours, mins, secs } = obj;
+        
+        daysSpan.innerHTML = days;
+        hoursSpan.innerHTML = this.padStrStart(hours);
+        minsSpan.innerHTML = this.padStrStart(mins);
+        secsSpan.innerHTML = this.padStrStart(secs);
 
-//     const days = Math.floor(time / (1000 * 60 * 60 * 24));
-//     refs.daySpan.innerHTML = days;
+    };
+    makeTime(ms) {
+        const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((ms % (1000 * 60)) / 1000);
 
-//     const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//     refs.hoursSpan.innerHTML = hours;
+        return {days, hours, mins, secs}
+     };
+    getTime() {
+        const now = Date.now();
+        const time = this.targetDate - now;
 
-//     const mins = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-//     refs.minsSpan.innerHTML = mins;
+        this.renderTimer(this.makeTime(time));
+    }
+};
 
-//     const secs = Math.floor((time % (1000 * 60)) / 1000);
-//     refs.secsSpan.innerHTML = secs;
-// }
 
-// getTime();
 
-setInterval(() => {
-    const now = Date.now();
-    const time = targetDate - now;
+const timer = new CountdownTimer({
+    selector: '#timer-1',
+    targetDate: new Date('Sep 03, 2021'),
+});
 
-    const days = Math.floor(time / (1000 * 60 * 60 * 24));
-    refs.daySpan.innerHTML = days;
-
-    const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    refs.hoursSpan.innerHTML = hours;
-
-    const mins = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-    refs.minsSpan.innerHTML = mins;
-
-    const secs = Math.floor((time % (1000 * 60)) / 1000);
-    refs.secsSpan.innerHTML = secs;
-}, 1000)
+timer.start();
